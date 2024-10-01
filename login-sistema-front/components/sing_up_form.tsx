@@ -7,11 +7,12 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
-import axios from 'axios'
+import { toast } from "sonner";
+import { useState } from "react";
+
 
 const SingUp = () => {
-
-  const router = useRouter()
+  const router = useRouter();
 
   const createAccountFormSchema = z
     .object({
@@ -23,7 +24,7 @@ const SingUp = () => {
       email: z
         .string()
         .nonempty("O e-mail é obrigatorio.")
-        .email()
+        .email('E-mail inválido.')
         .toLowerCase()
         .trim(),
       password: z.string().min(6, "Minimo de 6 caracteres.").trim(),
@@ -44,20 +45,21 @@ const SingUp = () => {
     resolver: zodResolver(createAccountFormSchema),
   });
 
+  const [apiError, setApiError] = useState('')
+
   const criarConta = async (data: createAccountFormData) => {
     const { name, email, password } = data;
     try {
-      await  axios.post("http://localhost:3333/portal/cadastro", {
+      await api.post("/portal/cadastro", {
         name,
         email,
         password,
       });
-      console.log('deu certo')
-      router.push('http://localhost3000/portal/login')
+      toast.success('Conta criada com sucesso!')
+      router.push("http://localhost:3000/portal/login"); 
     } catch {
-      throw new Error("falhou");
+      setApiError('Usuario já cadastrado.')
     }
-    
   };
 
   return (
@@ -70,39 +72,40 @@ const SingUp = () => {
         <div className=" flex flex-col gap-1">
           <label>Nome</label>
           <Input
-            type=""
+            type="text"
             {...register("name")}
             className=" border-zinc-600 shadow-sm rounded h-10 px-3 bg-zinc-900"
           />
-          {errors.name && <span>{errors.name.message}</span>}
+          {errors.name && <span className="text-red-700 text-xs">{errors.name.message}</span>}
         </div>
         <div className=" flex flex-col gap-1">
           <label>E-mail</label>
           <Input
-            type=""
+            type="email"
             {...register("email")}
             className=" border-zinc-600 shadow-sm rounded h-10 px-3 bg-zinc-900"
           />
-          {errors.email && <span>{errors.email.message}</span>}
+          {errors.email && <span className="text-red-700 text-xs">{errors.email.message}</span>}
         </div>
         <div className=" flex flex-col gap-1">
           <label>Senha</label>
           <Input
-            type=""
+            type="password"
             {...register("password")}
             className=" border-zinc-600 shadow-sm rounded h-10 px-3 bg-zinc-900"
           />
-          {errors.password && <span>{errors.password.message}</span>}
+          {errors.password && <span className="text-red-700 text-xs">{errors.password.message}</span>}
         </div>
         <div className=" flex flex-col gap-1">
           <label>Conferir senha</label>
           <Input
-            type=""
+            type="password"
             {...register("checkPassword")}
             className=" border-zinc-600 shadow-sm rounded h-10 px-3 bg-zinc-900"
           />
-          {errors.checkPassword && <span>{errors.checkPassword.message}</span>}
+          {errors.checkPassword && <span className="text-red-700 text-xs">{errors.checkPassword.message}</span>}
         </div>
+        {apiError && <span className="text-red-600">{apiError}</span>}
         <Button className="bg-purple-950 rounded font-semibold text-white h-10">
           Criar conta
         </Button>
