@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "next": "^14.2.13",
     "@hookform/resolvers": "^3.9.0",
     "axios": "^1.7.7",
     "react-hook-form": "^7.53.0",
