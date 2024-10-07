@@ -6,7 +6,7 @@ export function useAppContext() {
   const context = useContext(AppContext)
 
   if (context === undefined) {
-    throw new Error('Não esta dentro do contexto')
+    throw new Error('nao esta dentro do contexto')
   }
 
   return context
