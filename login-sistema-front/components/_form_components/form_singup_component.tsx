@@ -1,6 +1,11 @@
-import { Input } from "./ui/input";
+import { useAppContext } from "@/app/_hook/use_app_context";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 const FormSingUpComponent = () => {
+
+  const { apiError, handleSubmit, register, criarConta, errors } = useAppContext()
+
   return ( 
     <div>
       <form
