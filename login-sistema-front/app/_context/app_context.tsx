@@ -1,0 +1,1 @@
+//todo design pattern aplicar
