@@ -5,14 +5,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import api from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { useState } from "react";
+import { useReactQuery } from "@/app/_hook/use_react_query";
 
 
 const SingUp = () => {
-  const router = useRouter();
 
   const createAccountFormSchema = z
     .object({
@@ -45,22 +41,12 @@ const SingUp = () => {
     resolver: zodResolver(createAccountFormSchema),
   });
 
-  const [apiError, setApiError] = useState('')
+  const { mutate: singUp, error } = useReactQuery.useSingUp()
 
-  const criarConta = async (data: createAccountFormData) => {
-    const { name, email, password } = data;
-    try {
-      await api.post("/portal/cadastro", {
-        name,
-        email,
-        password,
-      });
-      toast.success('Conta criada com sucesso!')
-      router.push("http://localhost:3000/portal/login"); 
-    } catch {
-      setApiError('Usuario já cadastrado.')
-    }
-  };
+   function criarConta( data: createAccountFormData) {
+    const {name, email, password} = data
+    singUp({name, email, password})
+   }
 
   return (
     <main className=" bg-zinc-900 p-8 rounded-xl flex-col gap-10 text-zinc-300 flex items-center justify-center">
@@ -106,7 +92,7 @@ const SingUp = () => {
           />
           {errors.checkPassword && <span className="text-red-700 text-xs">{errors.checkPassword.message}</span>}
         </div>
-        {apiError && <span className="text-red-600">{apiError}</span>}
+        {error?.message && <span className="text-red-600">{error?.message}</span>}
         <Button className="bg-purple-950 rounded font-semibold text-white h-10">
           Criar conta
         </Button>
