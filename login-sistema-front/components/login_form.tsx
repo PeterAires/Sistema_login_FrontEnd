@@ -8,13 +8,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import api from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useReactQuery } from "@/app/_hook/use_react_query";
 
 const LoginForm = () => {
-  const router = useRouter();
-
   const createAccountFormSchema = z.object({
     email: z
       .string()
@@ -35,19 +31,12 @@ const LoginForm = () => {
     resolver: zodResolver(createAccountFormSchema),
   });
 
-  const [apiError, setApiError] = useState();
+  const { mutate: useLogin , error } = useReactQuery.useLogin()
 
-  const LogarUsuario = async (data: createAccountFormData) => {
-    const { email, password } = data;
-    try {
-      const response = await api.post("/portal/login", { email, password });
-      router.push("http://localhost:3000/portal");
-      console.log(response.data);
-    } 
-    catch (error: any) {
-      setApiError(error.response ? error.response.data.error : error.message);
-    }
-  };
+  function LogarUsuario(data: createAccountFormData) {
+    const {email, password} = data
+    useLogin({email, password})
+  }
 
   return (
     <main className=" bg-zinc-900 p-8 rounded-xl flex-col gap-10 text-zinc-300 flex items-center justify-center">
@@ -74,7 +63,7 @@ const LoginForm = () => {
           />
           {errors.password && <span className="text-red-700 text-xs">{errors.password.message}</span>}
         </div>
-        {apiError && <span className="text-red-600 text-sm">{apiError}</span>}
+        {error?.message && <span className="text-red-600 text-sm">{error.message}</span>}
         <Button className="bg-purple-950 rounded font-semibold text-white h-10">
           Entrar
         </Button>

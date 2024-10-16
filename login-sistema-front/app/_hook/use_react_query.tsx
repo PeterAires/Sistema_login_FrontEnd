@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import checkAuthQuery from "../_querys/check_auth";
 import { SingUpQuery } from "../_querys/sing_up_query";
+import LoginQuery from "../_querys/login_query";
 
 const useCheckAuth = () => {
   const router = useRouter();
@@ -24,14 +25,26 @@ const useSingUp = () => {
     onSuccess: () => {
       router.push("/portal/login");
     },
-    onError: () => {
-      console.log("error");
+    onError: (error) => {
+      console.log("error no cadastro", error);
     },
   });
   return mutation;
 };
 
+const useLogin = () => {
+  const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: LoginQuery,
+    onSuccess: () => {
+      router.push("/portal");
+    },
+    onError: (error) => console.log("erro no login", error),
+  });
+  return mutation;
+};
 export const useReactQuery = {
   useCheckAuth,
-  useSingUp
-}
+  useSingUp,
+  useLogin,
+};
